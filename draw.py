@@ -3,7 +3,53 @@ from matrix import *
 from gmath import *
 
 def scanline_convert(polygons, i, screen, zbuffer ):
-    pass
+    random.seed()
+    color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
+
+    if poly0[1] < poly1[1] and poly0[1] < poly2[1]:
+        bottom = poly0
+        middle = poly1 if poly1[1] <= poly2[1] else poly2
+        top = poly1 if middle == poly2 else poly2
+
+    elif poly1[1] < poly2[1] and poly1[1] < poly0[1]:
+        bottom = poly1
+        middle = poly0 if poly0[1] <= poly2[1] else poly2
+        top = poly0 if middle == poly2 else poly2
+
+    else:
+        bottom = poly2
+        middle = poly0 if poly0[1] <= poly1[1] else poly1
+        top = poly0 if middle == poly1 else poly1
+
+    if bottom[1] == middle[1] and bottom[0] > middle[0]:
+        bottom, middle = middle, bottom
+
+    x0,x1, y = bottom[0], bottom[0], bottom[1]
+    z0, z1 = bottom[2], bottom[2]
+
+    quot0 = 0 if int(top[1] - bottom[1]) == 0 else (top[0] - bottom[0])/(top[1] - bottom[1])
+    quot1 = 0 if int(top[1] - middle[1]) == 0 else (top[0] - middle[0])/(top[1] - middle[1])
+    quot2 = 0 if int(middle[1] - bottom[1]) == 0 else (middle[0] - bottom[0]) /(middle[1] - bottom[1])
+
+    zquot0 = 0 if int(top[1] - bottom[1]) == 0 else (top[2] - bottom[2])/(top[1] - bottom[1])
+    zquot1 = 0 if int(top[1] - middle[1]) == 0 else (top[2] - middle[2])/(top[1] - middle[1])
+    zquot2 = 0 if int(middle[1] - bottom[1]) == 0 else (middle[2] - bottom[2]) /(middle[1] - bottom[1])
+
+    while y <= int(middle[1]):
+        draw_horizontal(int(y), int(x0), z0, int(x1), z1, screen, zbuffer, color)
+        x0 += quot0
+        z0 += zquot0
+        x1 += quot2
+        z1 += zquot2
+        y+=1
+    x1, y, z1 = middle[0],int(middle[1]), middle[2]
+    while y < int(top[1]):
+	draw_horizontal(int(y), int(x0), 500, int(x1), 500, screen, zbuffer, color)
+        x0 += quot0
+        z0 += zquot0
+        x1 += quot1
+        z1 += zquot1
+        y+=1
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
     add_point(polygons, x0, y0, z0)
