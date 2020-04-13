@@ -55,7 +55,19 @@ def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
     add_point(polygons, x0, y0, z0)
     add_point(polygons, x1, y1, z1)
     add_point(polygons, x2, y2, z2)
+def draw_polygons( polygons, screen, zbuffer, color ):
+    if len(polygons) < 2:
+        #print 'Need at least 3 points to draw'
+        return
 
+    point = 0
+    while point < len(polygons) - 2:
+
+        normal = calculate_normal(polygons, point)[:]
+        if normal[2] > 0:
+            scanlines(polygons[point], polygons[point+1], polygons[point+2], screen, zbuffer, color)
+        point+= 3
+"""
 def draw_polygons( polygons, screen, zbuffer, color ):
     if len(polygons) < 2:
         print('Need at least 3 points to draw')
@@ -90,6 +102,7 @@ def draw_polygons( polygons, screen, zbuffer, color ):
                        screen, zbuffer, color)
         point+= 3
 
+"""
 
 def add_box( polygons, x, y, z, width, height, depth ):
     x1 = x + width
